@@ -1,3 +1,6 @@
-*.aux
-*.toc
-*.fdb_latexmk
+*
+!*.tex
+!*.jpeg
+!*.png
+!*.bib
+!*.pdf
