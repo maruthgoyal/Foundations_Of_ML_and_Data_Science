@@ -1,0 +1,56 @@
+This is BibTeX, Version 0.99d (TeX Live 2019)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: main.aux
+A level-1 auxiliary file: 1_preface.aux
+A level-1 auxiliary file: 2_intro.aux
+A level-1 auxiliary file: 3_lin_alg.aux
+A level-1 auxiliary file: 4_probability.aux
+A level-1 auxiliary file: 5_geometry_of_high_dim.aux
+A level-1 auxiliary file: 6_curse_and_blessing.aux
+A level-1 auxiliary file: 7_random_proj_jl.aux
+A level-1 auxiliary file: 8_convex_functions.aux
+A level-1 auxiliary file: 9_gradient_descent.aux
+A level-1 auxiliary file: Appendix.aux
+The style file: apalike.bst
+Database file #1: references.bib
+You've used 2 entries,
+            1935 wiz_defined-function locations,
+            491 strings with 4167 characters,
+and the built_in function-call counts, 589 in all, are:
+= -- 55
+> -- 25
+< -- 1
++ -- 8
+- -- 8
+* -- 42
+:= -- 118
+add.period$ -- 5
+call.type$ -- 2
+change.case$ -- 14
+chr.to.int$ -- 2
+cite$ -- 2
+duplicate$ -- 23
+empty$ -- 36
+format.name$ -- 10
+if$ -- 106
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 1
+newline$ -- 12
+num.names$ -- 6
+pop$ -- 12
+preamble$ -- 1
+purify$ -- 14
+quote$ -- 0
+skip$ -- 20
+stack$ -- 0
+substring$ -- 24
+swap$ -- 1
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 12
+warning$ -- 0
+while$ -- 4
+width$ -- 0
+write$ -- 24

@@ -1,0 +1,94 @@
+\section{Curse and Blessings of High Dimensional Geometry}
+\subsection{The Curse}
+There are many well-studied ways of interpolating functions in low dimensions. For instance, linear interpolation, polynomial interpolation, spline interpolation, etc. from numerical analysis (see \autoref{sec:app:interp}). However, these methods break down in high dimensions. This is because of the {\em curse of dimensionality}.
+\begin{curse}[Curse of Dimensionality]
+The number of samples $f(x_j)$ needed to meaningfully approximate a function $f: [0,1]^d \to \R$ increases {\bf exponentially} in $d$.
+\end{curse}
+One way to see this is to see how many samples we would need to meaningfully approximate our domain. For instance, suppose our domain is the unit cube in $d$ dimensions, $[0,1]^d$. Let's say we want to approximate the domain by splitting it up into cubes of side $1/4$. i.e., we will divide the unit cube into cubes of side $1/4$ and then just sample one point from each of those cubes as a reasonably approximation of the unit cube. Well, that's still $\mathbf{4^d}$ points!
+\begin{theorem}
+Approximating the unit cube with samples from cubes of side $1/\epsilon$, requires $\O(\epsilon^d)$ samples. i.e., for any $\epsilon > 0$ we need to take $(1/\epsilon)^d$ samples $x_j \in [0,1]^d$ to form a grid resolution $\norm{{\mathbf{x}}_j - \mathbf{x}_k} = \epsilon$ with respect to any norm $\norm{\cdot} = \norm{\cdot}_p$.
+\end{theorem}
+Thus, in order to approximate functions in high-dimensions, we must be more clever. In particular, we need to exploit {\em strong additional information} about the function. Assumptions such as smoothness (i.e., existence of derivatives) are generally not strong enough.
+
+\subsection{The Unit Ball}
+As an example of how assumptions on our function might help us, we shall study functions which lie on the unit ball in $d$ dimensions. i.e., we have $f: \B^d \to \R$ where $\B^d = \set{x \in \R^d: \norm{x}_2^2 \leq 1}$. As cute and symmetrical as this domain seems, it has its own set of problems. For instance, observe that in $d$ dimensions there are $2^d$ orthants. Thus, even to just sample points on the surface of the ball in the direction of each of these orthants we need $2^d$ points, and even then we get a grid resolution of at most $\sqrt{2}$.
+
+But what if we know something more about our function, and so can use fewer samples? How do we just generate samples from the unit ball?
+    \subsubsection{Sampling from the Unit Ball}
+    With computers, it is common and standard to have access to a psuedorandom generator (PRNG) which produces a stream of numbers indistinguishable to most common programs from a uniform distribution $\U[0,1)$. Thus, given access to a randomness oracle to sample from $\U[0,1]$, how do we sample from $\B^d$?
+    \paragraph{Method 1: Sample from $[-1,1]^d$}
+    One way to do this is to sample points from $\U[-1,1]^d$, and keep only those which are inside $\B^d$. This sounds great, and can be implemented in a single line of Python (though, what can't these days?), but there's an issue: in higher dimensions, we will end up keeping almost none of the points we sample. This happens because in high dimensions the ratio of the volume of the ball to the volume of the cube vanishes exponentially fast.
+    
+    \begin{theorem}[Volume of Unit Ball]
+    The volume $V(d)$ of the unit ball $\B^d$ in $d$-dimensions is given as
+    \begin{align*}
+        V(d) = \frac{\pi^{d/2}}{\frac{d}{2}\Gamma\left(\frac{d}{2}\right)}
+    \end{align*}
+    \end{theorem}
+    Observe that since $\Gamma\left(\frac{d}{2}\right) \sim \left(\frac{d}{2}\right)!$, we have that $V(d)$ decays exponentially in $d$. Moreover, the ratio of this volume to the unit ball would be given by
+    \begin{align*}
+        \frac{\pi^{d/2}}{\frac{d}{2}\Gamma\left(\frac{d}{2}\right)} \cdot 2^{-d}
+    \end{align*}
+    which decays at least as fast. Thus, for even relatively small $d$ this method becomes infeasible very quickly.
+    \begin{curse}[Volume Ratios in High Dimensions]
+    The volume of the unit sphere decays to $0$ exponentially fast in $d$. Moreover, the ratio of the volume of the unit sphere to that of the unit cube decays exponentially fast in $d$.
+    \end{curse}
+    Surely there is another way?
+    
+    \paragraph{Method 2: When in doubt, Gaussian}
+    While the name of this paragraph is a bit of a giveaway, we shall nonetheless motivate why it's a good idea to call upon the mighty Gaussian. First, recall the density of the Gaussian (see \autoref{sec:prob:gaussian}:
+    \begin{defn}[Gaussian Distribution]
+    The univariate Gaussian distribution with mean $\mu$ and variance $\sigma^2$, written as $\N(\mu, \sigma^2)$, is defined as the distribution with density
+    \begin{align*}
+        p(x) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(\frac{-(x-\mu)^2}{2\sigma^2}\right)
+    \end{align*}
+    \end{defn}
+    
+    \begin{defn}[Multivariate Gaussian]
+    The multivariate $d$-dimensional Gaussian distribution with mean $\mu \in \R^d$, and symnmetric positive semidefinite covariance matrix $\Sigma \in \R^{d \times d}$, written as $\N(\mu, \Sigma)$, is defined as the distribution with density
+    \begin{align*}
+        p(x) = \frac{1}{(2\pi)^{d/2} \sqrt{|\Sigma|}} \exp\left(-\half \cdot (x - \mu)^\top \Sigma^{-1} (x - \mu) \right)
+    \end{align*}
+    \end{defn}
+    The key thing to observe is, if we look at the multivariate Gaussian $\N(\mathbf{0}, \mathbf{I})$ then the density becomes
+    \begin{align*}
+        p(x) = \frac{1}{(2\pi)^{d/2}} \exp\left(\frac{-(x_1^2 + x_2^2 + \dots + x_d^2)}{2}\right)
+    \end{align*}
+    That is, the distribution is {\bf spherically symmetric}. In other words, the density is the same for all vectors $x \in \R^d$ which lie on the surface of the same sphere. In particular, this means that sampling from this distribution amounts to sampling a random direction on the unit sphere (up to rescaling). You know what's even better? This is precisely the join density obtained by sampling $d$ i.i.d points from $\N(0,1)$.
+    \begin{theorem}
+    Sampling $\frac{x}{\norm{x}}$ where $\mathbf{x} \sim \N(0,1)^d$ is equivalent to sampling a point uniformly at random on the \textbf{surface} of the sphere.
+    \end{theorem}
+    Are we done? Nope! We can now generate points uniformly at random on the \textbf{surface} of the unit sphere, but we want to generate points uniformly at random \textbf{inside} the unit sphere. i.e., the surface and everything inside. Intuitively, once we have random points on the sphere, we should be able to simply rescale appropriately to get a point inside right? The answer is yes, but with some care.
+    
+    Suppose we simply sample a radius uniformly at random $r \sim \U[0,1]$ and rescale our point to be $r \cdot \frac{{\bf x}}{\norm{{\bf x}}}$. Does this work? Unfortunately, no. The reason is this way we will end up sampling \textbf{way} too many points close to the origin. Think about it this way: there are more points on the surface of the sphere of radius $1$ than the sphere of radius $0.1$. Thus, it makes sense to scale the probability of sampling a point at some radius with the number of points on the surface of the sphere of that radius. i.e., make it scale as the surface area of the sphere of radius $r$.
+    
+    \begin{theorem}
+    In $d$ dimensions, the surface area of the sphere of radius $r$ is given by
+    \begin{align*}
+        S(r; d) = \frac{2\pi^{d/2}}{\Gamma\left(\frac{d}{2}\right)} \cdot r^{d-1}
+    \end{align*}
+    \end{theorem}
+    Thus, we see that $S(r; d)$ scales as $r^{d-1}$. A quick integral shows that with appropriate normalization constants, the distribution we are looking for has density
+    \begin{align*}
+        p(r) = dr^{d-1}
+    \end{align*}
+    Thus we have the following final result:
+    \begin{theorem}
+    Sampling $r \cdot \frac{\mathbf{x}}{\norm{\mathbf{x}}}$ where $r \sim dr^{d-1}$ and $\mathbf{x} \sim \N(0,1)^d$ is equivalent to sampling a point uniformly at random from $\B^d$.
+    \end{theorem}
+    Note that we can sample from both $\N(0,1)$ and $dr^{d-1}$ with access to only $\U[0,1]$ (see \autoref{sec:prob:sampling}).
+    
+    \paragraph{A ``blessing'' of dimensionality}
+    Until now we have mentioned multiple curses of high dimensionality. But surely it isn't all cursed? Well, if it's an reassurance one of the blessings of high dimensionality is that we ``know'' how random i.i.d vectors behave in high dimensions. In particular, recall the following from \autoref{sec:prob:conc:master}
+    \begin{thm}
+    For $X \sim \N({\bf 0}, {\bf I}_d)$ the expected length of $X$ is $\sqrt{d}$.
+    \end{thm}
+    \begin{proof}
+    \begin{align*}
+        \E\left[\norm{X}^2\right] = \E\left[\norm{X_1}^2 + \dots + \norm{{X_d}^2}\right] = d\E\left[\norm{X_1}^2\right] = d
+    \end{align*}
+    \end{proof}
+    \begin{thm}[Gaussian Annulus Theorem]
+    For a $d$-dimensional spherical Gaussian with unit variances, for any $\beta \leq \sqrt{d}$, all but at most $3\exp\left(-c\beta^2\right)$ of the probability mass lies within the annulus $\sqrt{d} - \beta \leq \norm{{\bf x}} \leq \sqrt{d} + \beta$, where $c > 0$ is a fixed positive constant.
+    \end{thm}
+    These two theorems put together tell us that in high dimensions, if we sample random Gaussian vectors, then with {\bf extremely} high probability these vectors will lie approximately on the sphere of radius $\sqrt{d}$. Thus, in high dimensions we have an increasingly confident sense of how these i.i.d Gaussian vectors behave.

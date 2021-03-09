@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{amsfonts, amsmath, amsthm, amssymb}
+\usepackage{tocloft}
+\usepackage{maruth}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{mdframed}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage[noend]{algpseudocode}
+\renewcommand{\O}{\mathcal{O}}
+\renewcommand{\L}{\mathcal{L}}
+\title{Foundations of ML and Data Science Notes}
+\author{Maruth Goyal}
+\date{Spring 2021}
+\setcounter{tocdepth}{4}
+\newtheorem{curse}{Curse}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}{Lemma}[theorem]
+\newtheorem{defn}{Definition}[section]
+\newtheorem{prop}{Property}[section]
+\newtheorem*{example}{Example}
+\newtheorem*{thm}{Theorem}
+
+\newcommand{\lemmaautorefname}{Lemma}
+\begin{document}
+
+\maketitle
+\tableofcontents
+\include{1_preface}
+\include{2_intro}
+\include{3_lin_alg}
+\include{4_probability}
+\include{5_geometry_of_high_dim}
+\include{6_curse_and_blessing}
+\include{7_random_proj_jl}
+\include{8_convex_functions}
+\include{9_gradient_descent}
+\include{Appendix}
+
+\section{References}
+\bibliographystyle{apalike}
+\bibliography{references}
+\end{document}

@@ -1,0 +1,41 @@
+\section{Appendix}
+\subsection{Math Glossary for lowly CS majors}
+\begin{defn}[Orthogonal Projection Matrix]
+A matrix $\A \in \R^{n \times n}$ is an orthogonal projection matrix if $\A^2 = \A$ and $\A^\top = \A$.
+\end{defn}
+\begin{defn}[Gamma Function]
+The Gamma Function $\Gamma(x): \R \to \R$ is defined as
+\begin{align*}
+    \Gamma(x) = \int_0^\infty t^{x-1}e^{-t} {\rm d}t
+\end{align*}
+Importantly, it satisfies $\Gamma(x) = (x-1)!$ for $x \in \Z^+$. In general, it satisfies $\Gamma(x) = x \cdot \Gamma(x-1)$.
+\end{defn}
+\begin{defn}[Hyperplane]
+In $d$ dimensions, a hyperplane is a subspace of dimension $d-1$.
+\end{defn}
+\begin{defn}[Half-space]
+A half space is either of the two parts that a hyperplane divides a space into.
+\end{defn}
+\begin{example}[half-space]
+In $2$ dimensions, consider any line in the plane. Then the parts on either side of the line define half-spaces.
+\end{example}
+\begin{defn}[Orthant]
+An orthant in $d$ dimensions is defined to be the intersection of $d$ mutually orthogonal half-spaces. The halfspaces induced by the standard bases for $\R^d$ induce $2^d$ orthants (for $d=2$, quadrants).
+\end{defn}
+\begin{example}[Orthants]
+The upper right quadrant in $2$ dimensions is the intersection of the half-spaces $\set{(x,y) \in \R^2 \mid x \geq 0 }$ and $\set{(x,y) \in \R^2 \mid y \geq 0}$. 
+\end{example}
+\begin{defn}[Smoothness]
+A function $f: A \to B$ is said to be smooth if it is infinitely-differentiable everywhere.
+\end{defn}
+\begin{defn}[Latent]
+A variable which is inferred, but not observed is considered to be a latent variable.
+\end{defn}
+\begin{example}[Latent Variable]
+Properties such as time taken to add to cart, time taken to check out cart, hit rate of recommendations etc are all measurable, but ``consumer satisfaction'' scores are inferred from these, not observed.
+\end{example}
+\subsection{Classical Interpolation Methods}
+\label{sec:app:interp}
+\subsubsection{Linear Interpolation}
+\subsubsection{Polynomial Interpolation}
+\subsubsection{Spine Interpolation}

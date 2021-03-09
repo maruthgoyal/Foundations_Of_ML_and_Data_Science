@@ -1,0 +1,61 @@
+\BOOKMARK [1][-]{section.1}{Preface}{}% 1
+\BOOKMARK [1][-]{section.2}{Introduction}{}% 2
+\BOOKMARK [1][-]{section.3}{Linear Algebra Review}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Matrix Norms}{section.3}% 4
+\BOOKMARK [3][-]{subsubsection.3.1.1}{p-Norms}{subsection.3.1}% 5
+\BOOKMARK [3][-]{subsubsection.3.1.2}{Frobenius Norm}{subsection.3.1}% 6
+\BOOKMARK [3][-]{subsubsection.3.1.3}{Nuclear Norm}{subsection.3.1}% 7
+\BOOKMARK [3][-]{subsubsection.3.1.4}{Entry-wise norms}{subsection.3.1}% 8
+\BOOKMARK [2][-]{subsection.3.2}{Spectral Decomposition of Semi Positive Definite Matrices}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.3}{Singular Value Decomposition}{section.3}% 10
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Principal Components Analysis}{subsection.3.3}% 11
+\BOOKMARK [3][-]{subsubsection.3.3.2}{Power Method}{subsection.3.3}% 12
+\BOOKMARK [3][-]{subsubsection.3.3.3}{QR Decomposition}{subsection.3.3}% 13
+\BOOKMARK [1][-]{section.4}{Probability Review}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{The Gaussian Distribution}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{2 Distribution}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.3}{Concentration Inequalities}{section.4}% 17
+\BOOKMARK [3][-]{subsubsection.4.3.1}{Markov's Inequality}{subsection.4.3}% 18
+\BOOKMARK [3][-]{subsubsection.4.3.2}{Chebyshev's Inequality}{subsection.4.3}% 19
+\BOOKMARK [3][-]{subsubsection.4.3.3}{Law of Large Numbers}{subsection.4.3}% 20
+\BOOKMARK [3][-]{subsubsection.4.3.4}{Master Tail Bound}{subsection.4.3}% 21
+\BOOKMARK [3][-]{subsubsection.4.3.5}{Chernoff Bounds}{subsection.4.3}% 22
+\BOOKMARK [2][-]{subsection.4.4}{Sampling from Distributions}{section.4}% 23
+\BOOKMARK [1][-]{section.5}{Geometry of High Dimensions}{}% 24
+\BOOKMARK [2][-]{subsection.5.1}{Properties of the Unit Ball}{section.5}% 25
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Surface Area of the Unit Ball}{subsection.5.1}% 26
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Volume of the Unit Ball}{subsection.5.1}% 27
+\BOOKMARK [1][-]{section.6}{Curse and Blessings of High Dimensional Geometry}{}% 28
+\BOOKMARK [2][-]{subsection.6.1}{The Curse}{section.6}% 29
+\BOOKMARK [2][-]{subsection.6.2}{The Unit Ball}{section.6}% 30
+\BOOKMARK [3][-]{subsubsection.6.2.1}{Sampling from the Unit Ball}{subsection.6.2}% 31
+\BOOKMARK [4][-]{section*.1}{Method 1: Sample from [-1,1]d}{subsubsection.6.2.1}% 32
+\BOOKMARK [4][-]{section*.2}{Method 2: When in doubt, Gaussian}{subsubsection.6.2.1}% 33
+\BOOKMARK [4][-]{section*.3}{A ``blessing'' of dimensionality}{subsubsection.6.2.1}% 34
+\BOOKMARK [1][-]{section.7}{Random Projections, Johnson-Lindenstrauss Lemma}{}% 35
+\BOOKMARK [1][-]{section.8}{Convex Functions}{}% 36
+\BOOKMARK [1][-]{section.9}{Gradient Descent}{}% 37
+\BOOKMARK [2][-]{subsection.9.1}{Least Squares problems}{section.9}% 38
+\BOOKMARK [3][-]{subsubsection.9.1.1}{Motivation and Setup}{subsection.9.1}% 39
+\BOOKMARK [3][-]{subsubsection.9.1.2}{Solving Least Squares}{subsection.9.1}% 40
+\BOOKMARK [4][-]{section*.4}{Properties of the Psuedoinverse}{subsubsection.9.1.2}% 41
+\BOOKMARK [3][-]{subsubsection.9.1.3}{Least Squares Example}{subsection.9.1}% 42
+\BOOKMARK [3][-]{subsubsection.9.1.4}{Efficiency of Solving Least Squares}{subsection.9.1}% 43
+\BOOKMARK [3][-]{subsubsection.9.1.5}{Solving Least Squares with Gradient Descent}{subsection.9.1}% 44
+\BOOKMARK [3][-]{subsubsection.9.1.6}{Convergence of Gradient Descent}{subsection.9.1}% 45
+\BOOKMARK [2][-]{subsection.9.2}{Convergence of GD for Smooth Functions}{section.9}% 46
+\BOOKMARK [3][-]{section*.9}{Picking \040in practice}{subsection.9.2}% 47
+\BOOKMARK [3][-]{subsubsection.9.2.1}{Concluding Notes}{subsection.9.2}% 48
+\BOOKMARK [4][-]{section*.10}{Nesterov's accelerated gradient method}{subsubsection.9.2.1}% 49
+\BOOKMARK [2][-]{subsection.9.3}{Convergence of GD for Convex Functions, Polyak-Lojasiewic Inequality}{section.9}% 50
+\BOOKMARK [3][-]{subsubsection.9.3.1}{GD with Smooth Functions satisfying PL-inequality}{subsection.9.3}% 51
+\BOOKMARK [3][-]{subsubsection.9.3.2}{Properties of the PL-inequality}{subsection.9.3}% 52
+\BOOKMARK [3][-]{subsubsection.9.3.3}{Strong Convexity and PL-inequality}{subsection.9.3}% 53
+\BOOKMARK [2][-]{subsection.9.4}{Stochastic Gradient Descent}{section.9}% 54
+\BOOKMARK [1][-]{section.10}{Appendix}{}% 55
+\BOOKMARK [2][-]{subsection.10.1}{Math Glossary for lowly CS majors}{section.10}% 56
+\BOOKMARK [2][-]{subsection.10.2}{Classical Interpolation Methods}{section.10}% 57
+\BOOKMARK [3][-]{subsubsection.10.2.1}{Linear Interpolation}{subsection.10.2}% 58
+\BOOKMARK [3][-]{subsubsection.10.2.2}{Polynomial Interpolation}{subsection.10.2}% 59
+\BOOKMARK [3][-]{subsubsection.10.2.3}{Spine Interpolation}{subsection.10.2}% 60
+\BOOKMARK [1][-]{section.11}{References}{}% 61
