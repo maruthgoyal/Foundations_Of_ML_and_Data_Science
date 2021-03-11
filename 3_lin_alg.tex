@@ -1,9 +1,102 @@
 \section{Linear Algebra Review}
 \subsection{Matrix Norms}
-\subsubsection{$p$-Norms}
-\subsubsection{Frobenius Norm}
-\subsubsection{Nuclear Norm}
+This section is heavily borrowed from the great Wikipedia article \cite{wiki:Matrix_norm}.
+\begin{defn}[Matrix Norm]
+A matrix norm $\norm{\cdot}: \R^{d \times n} \to \R$ is any real-valued function on matrices satisfying the following properties:
+\begin{enumerate}
+    \item $\norm{\alpha \A} = |\alpha| \norm{\A}$
+    \item $\norm{\A + {\bf B}} \leq \norm{\A} + \norm{\bf B}$
+    \item $\norm{\A} \geq 0$
+    \item $\norm{\A} = 0 \iff \A = {\bf 0}$
+\end{enumerate}
+\end{defn}
+\begin{prop}[Submultiplicative Norms]
+    A norm $\norm{\cdot}$ is said to be {\em submultiplicative} if it satisfies
+    \begin{align*}
+        \norm{\A {\bf B}} \leq \norm{\A} \cdot \norm{\bf B}
+    \end{align*}
+\end{prop}
+
+\begin{remark}
+    The notation for matrix norms is {\em horrible}. $\norm{\A}_2$ can mean the $2$-operator norm, or the entry-wise $2$-norm, or the Schatten $2$-norm (Frobenius norm).
+    Always make sure you know exactly which norm the authors mean, and if possible be explicit about it if/when you use the notation if not immedeately
+    clear from context.
+\end{remark}
+\subsubsection{Vector-induced (Operator) norms}
+Given any matrix $\A \in \R^{d \times n}$, and any vector norm $\norm{\cdot}: \R^d \to \R$, we define
+the induced matrix norm to be
+\begin{align*}
+    \norm{\A} = \sup \, \set{\norm{\A \x} \, \mid \, \x \in \R^n \, , \, \norm{\x} = 1}
+\end{align*}
+   \paragraph{Special Cases}
+   \begin{enumerate}
+       \item When the norm is $\norm{\cdot}_1$, i.e. the $1$-norm for vectors, we have
+       \begin{align*}
+           \norm{\A}_1 = \max_{1 \leq j \leq n} \norm{\A_{\bullet, j}}_1
+       \end{align*}
+       i.e., the largest $1$-norm among the columns.
+       \item When the norm is $\norm{\cdot}_2$, i.e. the $2$-norm for vectors, we have
+       \begin{align*}
+           \norm{\A}_2 = \sigma_{\max{}}(\A)
+       \end{align*}
+       i.e., the largest singular value of $\A$. For square matrices, equivalently this is the largest
+       eigenvalue $\lambda_{\max{}}(\A)$. Also known as the {\em Spectral Norm}.
+   \end{enumerate}
+   \paragraph{Properties}
+   \begin{enumerate}
+       \item Any operator norm is {\em submultiplicative}.
+   \end{enumerate}
+
 \subsubsection{Entry-wise norms}
+   Another way to use vector norms to create matrix norms is to simply flatten an $n \times d$ matrix into a vector
+   of length $nd$, and then use a vector norm $\norm{\cdot}: \R^{dn} \to \R$. Thus the entry-wise norm under
+   the $p$-vector norm is
+   \begin{align*}
+       \norm{A}_p = \lp \sum_{i,j} |a_{ij}|^p \rp^{1/p}
+   \end{align*}
+   \paragraph{Special Cases}
+   \begin{enumerate}
+       \item When $p = 2$, this is the Frobenius norm $\norm{\cdot}_F$.
+       \item When $p = \infty$ this is the $\ell_\infty$ norm, i.e., simply the maximum value in the matrix.
+   \end{enumerate}
+\subsubsection{Schatten $p$-norms}
+The Schatten $p$-norms are defined in terms of the singular values of the matrix $\A$. In particular,
+if $\set{\sigma_i}_{i \in [r]}$ are the singular values for a matrix $\A$, then the Schatten $p$-norm is
+\begin{align*}
+    \norm{\A}_p = \lp \sum_{i \in [r]} \sigma_i^p \rp^{1/p}
+\end{align*}
+
+\paragraph{Special Cases}
+\begin{enumerate}
+    \item When $p = 1$, this is known as the {\em Nuclear Norm}.
+    \item When $p = 2$, this is again equivalent to the {\em Frobenius Norm} $\norm{\cdot}_F$.
+\end{enumerate}
+\paragraph{Properties}
+\begin{enumerate}
+    \item All Schatten norms are {\em submultiplicative}
+    \item The Schatten norms are invariant under unitary operations. i.e., $\norm{U\A V}_p = \norm{\A}_p$ where $U,V$ are unitaries.
+\end{enumerate}
+
+\subsection{Frobenius norm}
+The Frobenius norm is a $2$-norm as both a Schatten $2$-norm, and an entry-wise norm. i.e.,
+\begin{align*}
+    \norm{\A}_F = \sqrt{\sum_{i \in [r]} \sigma_i^2} = \sqrt{\tr\lp \A^\top \A \rp} = \sqrt{\sum_{i,j} |a_{i,j}|^2}
+\end{align*}
+It is also in fact the norm induced by the {\em Frobenius Inner Product}
+\begin{defn}[Frobenius Inner Product]
+    Given $\A, {\bf B}$ the Frobenius inner product $\inn{\A, {\bf B}}$ is defined as
+    \begin{align*}
+        \inn{\A, {\bf B}}_F = \tr\lp \A^\top {\bf B} \rp 
+    \end{align*}
+\end{defn}
+Thus we also get the following equality for the Frobenius norm
+\begin{prop}
+$\norm{A + B}_F^2 = \norm{A}_F^2 + \norm{B}_F^2 + 2\inn{A, B}_F$
+\end{prop}
+\begin{prop}
+    $\norm{\A^\top\A}_F = \norm{\A\A^\top}_F \leq \norm{\A}_F^2$
+\end{prop}
+Of course, the norm also enjoys the properites of unitary invariance, and submultiplicity of Schatten norms.
 \subsection{Spectral Decomposition of Semi Positive Definite Matrices}
 \subsection{Singular Value Decomposition}
 \subsubsection{Principal Components Analysis}

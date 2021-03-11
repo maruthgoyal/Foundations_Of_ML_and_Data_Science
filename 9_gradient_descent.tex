@@ -109,8 +109,8 @@ You might have noticed I sneaked in a square in there. As it turns out, the $2$-
         \subsubsection{Solving Least Squares with Gradient Descent}
         Gradient Descent is an extremely general, and simple first-order optimization method. The key intuition/insight is that in order to minimize a function, we keep moving in the direction of the negative gradient. The reader may recall that this is the direction of steepest decrease.
         \begin{algorithm}[H]
-        \label{algo:gd}
         \caption{Gradient Descent Psuedocode}
+        \label{algo:gd}
         \begin{algorithmic}[1]
         \Procedure{GradientDescent}{$f, \eta$}
         \State Initialize $x_0 \in_R \R^d$
@@ -412,4 +412,88 @@ If $f: \R^d \to \R$ is a $\mu$-strongly convex function, then
 \end{enumerate}
 \end{prop}
 If we have a convex loss function $f$, then adding $\ell_2$-regularization makes it strongly convex. This can improve the convergence rate from $\O(1/t)$ to exponential. This motivates the weight-decay regularization technique used for neural networks.
+
 \subsection{Stochastic Gradient Descent}
+Until now, we have been talking about gradient descent while somewhat closing our eyes towards the reality of computational cost. Unfortunately,
+for large datasets computing the gradient across all of our training samples is quite intractable. The cost of each gradient descent update scales linearly
+with both (1) the number of variables, and (2) the number of training samples. Thus, in order to make the problem tractable we instead consider
+a randomized version of GD, {\em Stochastic Gradient Descent} (SGD).
+
+SGD performs pretty much the same update as vanilla gradient descent with the modification that instead of computing the gradient across all
+training samples, we will simply compute the gradient with respect to a {\em randomly} chosen sample. In practice, the random choice will be without replacement
+,however, to simplify mathematical analysis we will always assume it is with replacement. 
+        \begin{algorithm}[H]
+        \caption{Stochastic Gradient Descent Psuedocode}
+        \label{algo:sgd}
+        \begin{algorithmic}[1]
+        \Procedure{StochasticGradientDescent}{$f, \eta$}
+        \State Initialize $x_0 \in_R \R^d$
+        \While{not converged}
+            \State pick $j_t \in_R [n]$
+            \State $x_{t+1} = x_t - \eta \grad f_{j_t}(x_t)$
+        \EndWhile
+        \Return $x_{t+1}$
+        \EndProcedure
+        \end{algorithmic}
+        \end{algorithm}
+The reader may constrast \autoref{algo:gd} with \autoref{algo:sgd}. Note that here we assume the loss function $f$ is of the form
+\begin{align*}
+    f(w_t) = \frac{1}{n} \sum_{i = 1}^n f_i(w)
+\end{align*}
+Where $f_i$ is the loss with respect to the $i^{\text{th}}$ training example. Observe with SGD we shave off a factor of $n$ in the time spent
+on each gradient update. Moreover, the SGD vector also enjoys the following nice property:
+\begin{prop}
+    The stocastic gradient vector is an {\em unbiased} estimate of the full gradient. i.e.,
+    \begin{align*}
+        \E\left[\grad f_{j_t}(w)\right] = \frac{1}{n} \sum_{j = 1}^n \grad f_j(w) = \grad f(w)
+    \end{align*}
+\end{prop}
+When implementing SGD, $x_0$ is generally sampled as an i.i.d Gaussian vector. While SGD sounds great right now, it does have
+(at least) two challenges:
+\begin{enumerate}
+    \item It takes $n$ iterations before the model has ``seen'' all the training data.
+    \item The individual updates may be more noisy.
+\end{enumerate}
+Thus, as with many things in life, a solution which is often used in practice is {\bf Mini-Batching}.
+In mini-batching, instead of just selecting $1$ random component of the loss function, we pick a batch size $B$, and
+pick a random batch of $B$ components, and compute the average gradient with respect to the batch. Thus, the update becomes
+\begin{algorithm}[H]
+    \caption{Mini-Batch Stochastic Gradient Descent Psuedocode}
+    \label{algo:mini_batch_sgd}
+    \begin{algorithmic}[1]
+    \Procedure{MinibatchStochasticGradientDescent}{$f, \eta, B$}
+    \State Initialize $x_0 \in_R \R^d$
+    \While{not converged}
+        \State pick $S \subset [n]$ where $|S| = B$
+        \State $x_{t+1} = x_t - \eta \frac{1}{B} \sum_{j \in S} \grad f_{j}(x_t)$
+    \EndWhile
+    \Return $x_{t+1}$
+    \EndProcedure
+    \end{algorithmic}
+    \end{algorithm}
+Observe that by linearity of expectation this is still an unbiased estimate of the full gradient vector.
+However, we have now reduced the variance. In particular, observe
+\begin{align*}
+    \Var\lp \frac{1}{B} \sum_{j \in S} \grad f_j(x_t) \rp = \sum_{j \in S} \Var \lp \frac{1}{B}\grad f_j(x_t) \rp = B \cdot \frac{1}{B^2} \Var \lp f_1(x_t) \rp = \frac{1}{B} \Var \lp f_1(x_t) \rp
+\end{align*}
+It is advisable to pick a reasonable batch-size based on available hardware. For instance, it may be a good idea to make sure your batch fits
+in your GPU memory, or perhaps isn't too large with respect to the bandwidth/throughput of the memory bus between CPU and GPU memory etc. 
+Ok, that's all great, but what about convergence? With minibatching we seem to have gotten something which is on expectation the full gradient, and
+with {\em lower} variance than just SGD, but does that mean the same guarantees from prior sections carry over? Not quite.
+
+\begin{theorem}
+    Suppose we are optimizing a loss function $f(w) = \frac{1}{n} \sum_{j = 1}^n f_j(w)$ where the following are satisfied:
+    \begin{enumerate}
+        \item Each $f_j$ is $L$-Lipschitz smooth ($\norm{\grad f_j(u) - \grad f_j(v)}_2 \leq L \norm{u - v}_2)$
+        \item Each $f_j$ is convex
+        \item The total loss $f$ is $\mu$-strongly convex
+        \item At the minimizing solution $w_*$ the ``component noise'' is $\sigma^2 = \frac{1}{n} \sum_{j = 1}^n \norm{\grad f_j(w_*)}^2$
+    \end{enumerate}
+    Then, assuming step-size $\alpha \leq \frac{1}{L}$ we have
+    \begin{align*}
+        \E\left[ \norm{w_t - w_*}_2^2 \right] \leq \left(1 - 2\alpha\mu\left(1 - \alpha L\right)^t\right) \norm{w_0 - w_*}_2^2 + \alpha \frac{\sigma^2}{\mu \left(1 - \alpha L\right)}
+    \end{align*}
+\end{theorem}
+
+% TODO: add commentary on the shape / intuition for this inequality
+% from lecture

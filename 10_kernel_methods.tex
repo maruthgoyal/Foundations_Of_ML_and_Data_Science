@@ -1,0 +1,172 @@
+\section{Kernel Methods}
+    \subsection{Linear Classification for Binary Data}
+        Suppose we are given training data $\set{(x_i, y_i)}_{i \in [n]}$ where
+        $x_j \in \R^d$ and $y_j \in \set{+1, -1}$. Suppose further that the data is
+        linearly separable.
+
+        \begin{defn}[Linearly Separable Data]
+            A dataset is said to be linearly separable if there exists an {\bf affine} map
+            $$\inn{{\bf w}, {\bf x}} - b$$ which separates the data. i.e.,
+            $$ \hat{y_i} = {\rm sign}\lp \inn{{\bf w}, {\bf x}} - b \rp = y_j \quad \forall j $$
+        \end{defn}
+        Recall that $\w$ is a vector which is normal to the plane. ${\bf b}$ is roughly the intercept
+        indicating how much the hyperplane is shifted in the direction of the normal $\w$. For instance,
+        $\inn{e_1, \x} = b$ in $\R^3$ is simply the $y-z$ plane shifted $b$ in the $\x$-direction.
+        The goal is to have all data points in one class to be on one side, and the others on the other. For linearly
+        separable data, a ``best'' lienar classifier is often the one which {\em maximizes the margin}.
+        i.e., maximizes the minimial distance between any point ${\bf x}_j$ and the hyperplane $\inn{{\bf w}, {\bf x}} - b$.
+        Chosing the max-margin classifier is a good heuristic for generalization.
+
+        For linearly separable data, there exist two parallel hyperplanes
+        \begin{align*}
+            \inn{\w, \x} - b = 1 \\
+            \inn{\w, \x} - b = -1
+        \end{align*}
+        such that
+        \begin{align*}
+            \inn{\w, \x}_j - b \geq 1 \quad y_j = 1 \\
+            \inn{\w, \x_j} -b \leq -1 \quad y_j = -1
+        \end{align*}
+
+        Thus, we want to maximize the distance between these two parallel
+        hyperplanes subject to these constraints. We define the distance from a point $u$ to the hyperplane
+        $H = \set{\x: \inn{\w, \x} = b}$ as 
+        \begin{align*}
+            d({\bf u}, H) = \min_x \, \norm{{\bf u} - \x}_2 \quad \text{s.t.} \  \inn{\w, \x} = b
+        \end{align*}
+        We will minimize this by the method of Lagrange multipliers. In particular, we define
+        \begin{align*}
+            d'(x; u) = \half \norm{x-u}_2^2 \quad \grad d'(x; u) = \x - {\bf u} \\
+            \grad \inn{\w, \x} = \w \\
+        \end{align*}
+        Thus we must simply solve
+        \begin{align*}
+            \x - {\bf u} - \lambda \w = 0 \\
+            \inn{\w, \x} = b
+        \end{align*}
+        Setting $x = {\bf u} + \lambda \w$ and substituting into the second equation we get
+        \begin{align*}
+            \inn{\w, {\bf u} + \lambda \w} = \inn{\w, {\bf u}} + \lambda \norm{w}_2^2 = b \\
+            \implies \lambda = \frac{b - \inn{\w, {\bf u}}}{\norm{\w}_2^2}
+        \end{align*}
+        Finally, substituting back we obtain
+        \begin{align*}
+            \x = {\bf u} + \frac{b - \inn{\w, {\bf u}}}{\norm{\w}_2} \hat{w} \quad d(u, H) = \frac{b - \inn{\w, {\bf u}}}{\norm{\w}_2}
+        \end{align*}
+        Picking $\u = \lp 0, 0, \dots, 0, \frac{1 + b}{\w_d} \rp$ on the line $\inn{\w,\x} - b = 1$ we get
+        $d(\u, H) = \frac{1}{\norm{\w}_2}$
+        Thus, the distance between these two parallel hyperplanes is $\frac{2}{\norm{\w}_2}$. Maximizing
+        this quantity is equivalent to minimizing $\norm{\w}^2_2$, which is a nice convex optimization
+        problem. 
+
+        \subsubsection{Support Vector Machine (SVM) Classification}
+        If we look at the above constraints, and multiply both sides by $y_i$, then
+        we may observe that we get the following optimization problem:
+        \begin{align*}
+            \min_{\w, b} \, \norm{\w}_2^2 \\
+            \text{s.t.} \quad y_j \cdot \lp \inn{\w, \x_j} - b \rp \geq 1
+        \end{align*}
+        This is the Support Vector Machine (SVM) classification problem, developed at AT\&T Bell Labs by Vapnik et al. \cite{boser1992training} in the 1990s.
+        They became famous at the time for beating neural networks with hand-designed features on handwriting recognition on the MNIST dataset.
+
+        \begin{prop}
+            Unlike neural networks, SVM is highly robust to outlier data points.
+        \end{prop}
+        Optimizing an SVM is really solving a constrained {\em Quadratic Program} (QP)
+        \begin{defn}
+            A quadratic program optimizing over some parameter $\z$ is defined as
+            \begin{align*}
+                \max_\z{} \; \half \z^\top \A \z - {\bf d}^\top \z \\
+                \text{s.t.} \quad {\bf B}\z \leq e
+            \end{align*}
+        \end{defn}
+        Now, the quadratic program stated above is in ``primal'' form. However, similar to linear programming, in quadratic
+        programming it is easier to solve the ``dual'' program. In particular, for SVM the dual program is
+        \begin{align*}
+            \max_{\alpha \in \R^n}{} \lp \sum_{i= 1}^n \alpha_i \rp - \half \sum_{(i,j) \in [n] \times [n]} (y_i y_j) \cdot (\alpha_i \alpha_j) \cdot \inn{\x_i, \x_j}  \label{eqn:svm:dual} \\
+            \text{s.t.} \quad \alpha_i \geq 0 \ \text{and} \ \sum_{i = 1}^n y_i \alpha_i = 0
+        \end{align*}
+        If $\alpha \in \R^n$ is the solution to this program, then the solution to the primal program $\w$ can be written as
+        \begin{align*}
+            \w = \sum (\alpha_i y_i) \cdot \x_i
+        \end{align*}
+        Important to note that $\alpha_i > 0$ when $\x_i$ lies on the boundary, or when it's a {\em support vector}. 
+
+        % TODO: using SVM for N classes
+        % TODO: soft-margin SVM for non-really-linearly separable    
+\subsection{Kernel Trick for Non-Linearly Separable Data}
+Often in real-world problems, data is structured, and separable, but perhaps not necessarily
+linearly separable. When this situation arises, of course we cannot directly apply something like SVM
+to it. However, we may apply a {\em kernel trick} by {\em lifting} our data to a higher dimension wherein
+it does exhibit linear separability and apply SVM in the higher dimension. The linear boundary in the higher
+dimension may correspond to a very non-linear seperator in the normal dimension.
+
+\begin{defn}
+    A kernel $K: \R^d \times \R^d \to \R$ can be any legal definition of an inner product
+    \begin{align*}
+        K(\x, \z) := \inn{\varphi(\x), \varphi(\z)} \quad \varphi: \R^d \to \R^D \; D >> d
+    \end{align*}
+\end{defn}
+
+\begin{defn}[Kernel Trick]
+    The idea of the kernel trick is the following:
+    \begin{enumerate}
+        \item Rewrite the algorithm (if possible) such that it only uses the data points $\x_i$ in the form of inner
+        products $\inn{\x_i, \x_j}$
+        \item Replace all inner products $\inn{\x_i, \x_j}$ with kernels $K(\x_i, \x_j)$
+    \end{enumerate}
+\end{defn}
+
+\begin{example}[Polynomial Kernel]
+    An intuitive example of a kernel is the polynomial kernel
+    \begin{align*}
+        K_r(\x, \z) := \lp \inn{\x, \z} \rp^r
+    \end{align*}
+    For $r = 2, d=2$
+    \begin{align*}
+        \varphi: \R^2 \to \R^3 : (x_1, x_2) \to \varphi(\x) = (x_1^2, x_2^2, \sqrt{2}x_1x_2)
+    \end{align*}
+    For the polynomial kernel of degree $r$, $K_r(\x, \z)$ lifts into a dimension which
+    grows at least exponentially in $r$. However, since we are never explicitly computing $\varphi$,
+    we just need to compute $r$ multiplications.
+\end{example}
+While the above Polynomial kernel is a nice toy example, it is not really used in practice. Instead, it is common
+to use kernels such as the {\rm Gaussian} kernel which is an inner product in an infinite-dimensional space.
+\begin{defn}[Gaussian Kernel]
+    The Gaussian Kernel is defined as
+    \begin{align*}
+        K(\x, \z) = \exp \lp -\frac{\norm{\x - \z}_2^2}{2\sigma^2} \rp
+    \end{align*}
+\end{defn}
+Since the Gaussian kernel operates in a ``radial basis'', it is able to provide linear separators for almost any data set.
+However, it often separates way too well and thus overfitting.
+There is also the $\tanh$ kernel, which when used with an SVM corresponds exactly to a $2$-layer neural-network.
+\begin{defn}[$\tanh$ Kernel]
+    The $\tanh$ kernel is defined as:
+    $$K(\x, \z) = \tanh\lp \alpha \x^\top \z + c \rp$$
+\end{defn}
+
+\subsubsection{Kernel SVM and other Generalizations}
+    Observe that the dual program for SVM is formulated in terms of just the inner products of the data points, $\inn{\x_i, \x_j}$. Thus,
+    we may apply the kernel trick, resulting in the ``kernel SVM'' program:
+    \begin{defn}[Kernel SVM]
+        The generalization of SVM substituting kernels for inner products is defined by the parameters obtained from the following program
+        \begin{align*}
+            \max_{\alpha \in \R^n} \lp \sum_{i= 1}^n \alpha_i \rp - \half \sum_{(i,j) \in [n] \times [n]} (y_i y_j) \cdot (\alpha_i \alpha_j) \cdot k(\x_i, \x_j) \\
+            \text{s.t.} \quad \alpha_i \geq 0 \ \text{and} \ \sum_{i = 1}^n y_i \alpha_i = 0
+        \end{align*}
+    \end{defn}
+    
+    As mentioned earlier this can let us find separating hyperplanes for non linearly seperable data by mapping into higher dimensions.
+    However, for certain choices of Kernels the model becomes prone to overfitting. Thus, it is advisable to add a regularization term
+    to prevent this. We may even want to explicitly allow some misclassification as a proxy for generalization. This results in the following
+    general SVM formulation:
+    \begin{defn}[Generalized SVM]
+        The variant of SVM allowing for some classification error for each example, $\xi_j$, and a regularization parameter $\lambda$ upon $\w$
+        is described by the following program:
+        \begin{align*}
+            \min_{\w, b,\xi} \  \lambda \norm{\w}_2^2 + \frac{1}{n} \sum_{j = 1}^n \xi_j \\
+            \text{s.t.} \  y_i \cdot \lp \inn{\w, \x_j} - b\rp \geq 1 - \xi_j, \  \xi_j \geq 0, \  \forall j
+        \end{align*}
+    \end{defn}
+    
