@@ -4,14 +4,105 @@
 \subsection{$\chi^2$ Distribution}
 \label{sec:prob:chi}
 \subsection{Concentration Inequalities}
+Whenever we are studying any sort of distribution, it is often our instinct to simply
+look at, say, the expectation and make strong conclusions based off of it. However,
+it is important to observe that even though the expectation may be, for instance, $0$
+a distribution might have very high variance. Thus, saying something along the lines of
+``this variable is $0$ with high probability'' would be incorrect. This motivates us to
+study various bounds on the {\em concentration} of a distribution. i.e., how close things
+tend to be to the expected value. In this section we will look at a bunch of important
+inequalities that are extremely useful in studying machine learning algorithms, but also
+appear very frequently across theoretical computer science.
 \label{sec:prob:conc}
 \subsubsection{Markov's Inequality}
+Markov's Inequality is the simplest/weakest bound on the right-tail of a distribution which
+takes only non-negative values. However, as we will see it acts as a powerful building-block
+allowing us to construct much stronger results.
+\begin{theorem}[Markov's Inequality]
+    Given a non-negative random variable $X$ with expectation $\E[X]$, and for $a > 0$
+    \begin{align*}
+        \Pr[X \geq a] \leq \frac{\E[X]}{a}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    Suppose that $X$ is a non-negative continuous variable with density $p$. Then,
+    \begin{align*}
+        \Pr[X \geq a] = \int_a^\infty p(x) \, \dx 
+    \end{align*}
+    Now, set $Y = \frac{X}{a}$, and thus consider the equivalent $\Pr[Y \geq 1]$
+    \begin{align*}
+        \Pr[X \geq a] = \Pr[Y \geq 1] = \int_1^\infty g(y) \, {\rm d}y \leq \int_1^\infty yg(y) \, {\rm d}y \leq \int_0^\infty yg(y) \, {\rm d}y = \E[Y] \\
+        = \E\left[\frac{X}{a}\right] = \frac{\E[X]}{a}
+    \end{align*}
+    The proof for the discrete case is analogous and left as an exercise.
+\end{proof}
+Of course, this bound is trivial for $a \leq \E[X]$ by definition of probability. However,
+its utility becomes a bit more apparent if we consider the following form:
+\begin{corollary}
+    \begin{align*}
+        \Pr[X \geq \alpha \E[X]] \leq \frac{1}{\alpha}
+    \end{align*}
+\end{corollary}
 \label{sec:prob:conc:markov}
 \subsubsection{Chebyshev's Inequality}
 \label{sec:prob:conc:cheby}
+While Markov's inequality is a good starting point, as we saw its bound can be a bit trivial
+in a lot of cases. Thus, we might want something a bit stronger. We will thus now take a gander
+at Chebyshev's (who was Markov's PhD advisor!) inequality. This time we will use not just the
+expectation, but also the variance in our bound. Hence, this motivates the use of higher moments
+to measure concentration.
+\begin{theorem}[Chebyshev's Inequality]
+    Given a random variable $X$ with expectation $\E[X]$, for any $c > 0$ we have
+    \begin{align*}
+        \Pr[|X - \E[X]| \geq c] \leq \frac{\Var(X)}{c^2}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    Looking at the shape of right-hand side of the theorem, it seems like squaring the
+    LHS might be a good idea, since $\Var(X) = \E[(X - \E[X])^2]$. Thus, observe
+    \begin{align*}
+        \Pr[|X - \E[X] \geq c] = \Pr[\lp X - \E[X] \rp^2 \geq c^2] \leq \frac{\E[\lp X - \E[X]\rp^2]}{c^2} = \frac{\Var(X)}{c^2}
+    \end{align*}
+    where the final inequality holds from Markov's inequality.
+\end{proof}
+Note that we do not require $X$ to be non-negative anymore. We now get a bound that
+both incorporates the variance, but also gives us a tighter $c^2$ term in the denominator.
+It also gives us an explicit notion of concentration since we're now bounding deviation from
+the mean. This becomes more clear if we consider the following corollary:
+\begin{corollary}
+    Given a random variable $X$ with expectation $\E[X]$ and standard deviation $\sigma$, for any $c > 0$
+    \begin{align*}
+        \Pr[|X - \E[X]| \geq c\sigma] \leq \frac{1}{c^2}
+    \end{align*}
+\end{corollary}
+Thus, the probability of being $c$ standard-deviations from the mean drops at most quadratically
+in $c$.
 % TODO: derivation, tightness
 \subsubsection{Law of Large Numbers}
 \label{sec:prob:conc:lol}
+When learning elementary probability, we all learned how the probability of heads showing up
+on a fair coin flip is $50\%$, yet in our ``experiments'' with ,say, $10$ flips we may have
+observed a probability of maybe $60\%$ or $70\%$ and concluded all of probability is a sham.
+Except, as statistics professors across the world caution, your sample size matters.
+In particular, the law of large numebrs tells us that as we increase the number of samples,
+the sample mean tends to the underlying true mean. We will now look at a formal statement and
+proof of this statement.
+\begin{theorem}[Law of Large Numbers]
+   Suppose $x_1, \dots, x_n$ are drawn independently from a distribution $X$, then
+   \begin{align*}
+    \E\lb \left| \frac{x_1 + \dots + x_n}{n} - \E[X]\right| \geq c \rb \leq \frac{\Var(X)}{nc^2}
+   \end{align*}
+\end{theorem}
+\begin{proof}
+    Observe the following:
+    \begin{align*}
+        \Var \lp \frac{x_1 + \dots + x_n}{n} \rp = \Var \lp \frac{1}{n} \lp x_1 + \dots x_n\rp \rp \\
+        = \frac{1}{n^2} \cdot  n\Var\lp X \rp = \frac{\Var(X)}{n}
+    \end{align*}
+    Finally, apply Chebyshev's inequality.
+\end{proof}
+Thus, formally the law of large numbers tells us the probability that the sample mean is $c$ standard-deviations away
+from the true mean falls quadratically in $c$, and linearly in the number of samples we draw, $n$.
 \subsubsection{Master Tail Bound}
 \label{sec:prob:conc:master}
 % TODO: Gaussian Annulus
@@ -19,5 +110,48 @@
 % TODO: Gaussian iid vectors orthogonal whp
 \subsubsection{Chernoff Bounds}
 \label{sec:prob:conc:chernoff}
+The Chernoff bounds are a very powerful framework for bounding the tails
+of distributions which are the sum of binomial variables. This
+kind of situation arises very frequently in, for instance, randomized
+algorithms.
+\begin{theorem}
+    Suppose $s = x_1 + \dots + x_n$ where the $x_i$ are independently
+    drawn from a binomial distribution with parameter $p$. Then,
+    we have $\mu = \E[s] = np$, and for any $\delta > 0$
+    \begin{align*}
+        \Pr \lb s > (1 + \delta)\mu\rb \leq \lp\frac{e^\delta}{(1 + \delta)^{(1 +  \delta)}}\rp^\mu
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    First observe that the function $e^{\lambda x}$ is non-negative, and monotone for all $x$.
+    Thus, we may consider
+    \begin{align*}
+        \Pr[s > (1 + \delta) \mu] = \Pr\lb e^{\lambda s} > e^{\lambda (1 + \delta)\mu} \rb
+    \end{align*}
+    Now, since $e^{\lambda s}$ is a non-negative variable, we may apply Markov's inequality to obtain
+    \begin{align*}
+        \Pr \lb e^{\lambda s} > e^{\lambda (1 + \delta)\mu} \rb \leq \E \lb e^{\lambda s}\rb \cdot e^{-\lambda (1 + \delta)\mu}
+    \end{align*}
+    Thus, we now want to bound $\E[e^{\lambda s}]$. Since $s = x_1 + \dots x_n$ and each $x_i$ is independent,
+    we will utilize the linearity of expectation.
+    \begin{align*}
+        \E[e^{\lambda s}] = \E \lb e^{\lambda \lp x_1 + \dots + x_n\rp} \rb = \E \lb \prod_{i = 1}^n e^{\lambda x_i} \rb = \prod_{i = 1}^n \E \lb e^{\lambda x_i} \rb
+    \end{align*}
+    Now, recall that we had assumed that $x_i$ was Bernoulli with parameter $p$. Thus,
+    \begin{align*}
+        \E\lb e^{\lambda x_i} \rb = p \cdot e^{\lambda} + (1 - p) \cdot 1 = p \lp e^{\lambda} - 1 \rp + 1 \leq e^{p \lp e^{\lambda} - 1 \rp}
+    \end{align*}
+    where the last inequality follows because $1 + x < e^x$, with $x = p \lp e^\lambda - 1 \rp$.
+    Hence, we have
+    \begin{align*}
+        \E \lb e^{\lambda s} \rb \leq \prod_{i = 1}^n e^{p \lp e^{\lambda} -1 \rp}
+    \end{align*}
+    Finally, setting $\lambda = \log{(1 + \delta)}$, we have
+    \begin{align*}
+        \Pr \lb e^{\lambda s} > e^{\lambda (1 + \delta)\mu} \rb \leq  \lp \prod_{i = 1}^n e^{p \lp e^{\log{(1 + \delta)}} -1 \rp} \rp \cdot e^{-\log{(1 + \delta)} (1 + \delta)\mu} \\
+        = \lp \prod_{i = 1}^n e^{p\delta} \rp \cdot (1 + \delta)^{-\mu(1 + \delta)} = e^{\delta \cdot np} \cdot (1 + \delta)^{-\mu(1 + \delta)} = \lp \frac{e^\delta}{(1 + \delta)^{(1 + \delta)}} \rp^\mu
+    \end{align*}
+\end{proof}
+\subsection{Central Limit Theorem}
 \subsection{Sampling from Distributions}
 \label{sec:prob:sampling}

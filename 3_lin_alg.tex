@@ -23,6 +23,7 @@ A matrix norm $\norm{\cdot}: \R^{d \times n} \to \R$ is any real-valued function
     clear from context.
 \end{remark}
 \subsubsection{Vector-induced (Operator) norms}
+\label{sec:linalg:opnorm}
 Given any matrix $\A \in \R^{d \times n}$, and any vector norm $\norm{\cdot}: \R^d \to \R$, we define
 the induced matrix norm to be
 \begin{align*}
@@ -97,7 +98,24 @@ $\norm{A + B}_F^2 = \norm{A}_F^2 + \norm{B}_F^2 + 2\inn{A, B}_F$
     $\norm{\A^\top\A}_F = \norm{\A\A^\top}_F \leq \norm{\A}_F^2$
 \end{prop}
 Of course, the norm also enjoys the properites of unitary invariance, and submultiplicity of Schatten norms.
-\subsection{Spectral Decomposition of Semi Positive Definite Matrices}
+\subsection{Spectral Decomposition of Matrices}
+\begin{theorem}[Spectral Theorem]
+    For a Hermitian operator $\A$ over $\C$ (i.e., $\A = \A^*$), there exists an orthogonal basis
+    composed of its eigenvectors, and further each eigenvalue is real.
+\end{theorem}
+\begin{defn}[Positive Semidefinite]
+    A symmetric matrix $\A \in \R^{n \times n}$ is said to be positive semidefinite iff
+    \begin{align*}
+        \x^\top \A \x \geq 0 \quad \forall \x \in \R^n
+    \end{align*}
+    If this inequality is strict, then it's said to be positive definite.
+\end{defn}
+\begin{example}
+    For any rectangular matrix ${\bf X} \in \R^{d \times n}$, both $\X\X^\top$ and $\X^\top \X$ are positive semidefinite.
+\end{example}
+\begin{theorem}
+    A symmetric matrix is positive definite (semidefinite) iff all of its eigenvalues are positive (nonnegative).
+\end{theorem}
 \subsection{Singular Value Decomposition}
 \subsubsection{Principal Components Analysis}
 \subsubsection{Power Method}

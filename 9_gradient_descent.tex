@@ -159,9 +159,9 @@ You might have noticed I sneaked in a square in there. As it turns out, the $2$-
     = \bx_t - \bx^* - \eta \A^\top\A \lp \bx_t - \bx^* \rp \\
     = (\I - \eta \A^\top \A)(\bx_t - \bx^*)
 \end{align*}
-We will now use the following property of the Frobenius norm
+We will now use the following property of the operator $2$-norm (see \autoref{sec:linalg:opnorm})
 \begin{prop}
-    The Frobenius norm $\norm{\cdot}_2$ on matrices is submultiplicative. i.e.,
+    The operator norm $\norm{\cdot}_2$ on matrices is submultiplicative. i.e.,
     \begin{align*}
         \norm{\A {\bf B}}_2 \leq \norm{\A}_2 \norm{{\bf B}}_2
     \end{align*}
@@ -171,36 +171,29 @@ Thus, we now obtain the following bound
     \norm{\bx_{t + 1} - \bx^*}_2 \leq \norm{\I - \eta \A^\top\A}_2 \cdot \norm{\bx_t - \bx^*}_2
 \end{align*}
 In order for convergence, we need this to be a decreasing series. In particular, we need $\norm{\I - \eta \A\A^\top}_2 < 1$. We now attempt to find $\eta$ so that this is satisfied.
-
-We first make the following observation
-\begin{lemma}
-    For any matrix $\A \in \R^{n \times d}$, $\norm{\A}_2 \leq \sqrt{\min{(n, d)}} \cdot \lambda_{\max}(\A)$.
-\end{lemma}
-\begin{proof}
-    \begin{align*}
-        \norm{\A}_2 = \sqrt{\sum_{i=1}^{\min{(n,d)}} \sigma_i^2} \leq \sqrt{\min{(n,d)} \cdot \sigma_1^2} = \sqrt{\min{(n,d)}} \cdot \sigma_1
-    \end{align*}
-\end{proof}
-Thus, we will now bound the largest eigenvalue of $(\I - \eta \A^\top\A)$ and then appropriately pick $\eta$ so we get a contraction. In particular, suppose $\A^\top \A$ has eigendecomposition $\A^\top\A = {\bf U} \Lambda {\bf U}^\top$. Then, $\I - \eta\A^\top\A$ has eigendecomposition ${\bf U} (\I - \eta\Lambda) {\bf U}^\top$ . In particular the eigenvalues satisfy
+Recall the following property of the norm:
+\begin{prop}
+    The operator norm $\norm{\cdot}_2$ satisfies $\norm{\A}_2 = \sigma_1$.
+\end{prop}
+Thus, we will now bound the largest eigenvalue of $(\I - \eta \A^\top\A)$ and then appropriately pick $\eta$ so we get a contraction.
+In particular, suppose $\A^\top \A$ has eigendecomposition $\A^\top\A = {\bf U} \Lambda {\bf U}^\top$.
+Then, $\I - \eta\A^\top\A$ has eigendecomposition ${\bf U} (\I - \eta\Lambda) {\bf U}^\top$ .
+Hence, the eigenvalues satisfy
 \begin{align*}
     1 - \eta\lambda_{\max} \leq \dots \leq 1 - \eta\lambda_{\min}
 \end{align*}
-Where $\lambda_{\min}, \lambda_{\max}$ are the smallest, and largest eigenvalues of $\A^\top\A$ respectively. Thus, since $n > d$, we have that $$\norm{\I - \eta \A^\top\A}_2 \leq \sqrt{d}(1 - \eta \lambda_{\min})$$. In order for this to be a contraction, we need
+Where $\lambda_{\min}, \lambda_{\max}$ are the smallest, and largest eigenvalues of $\A^\top\A$ respectively.
+Thus, since $n > d$, we have that $$\norm{\I - \eta \A^\top\A}_2 \leq (1 - \eta \lambda_{\min})$$
+In order for this to be a contraction, we need
 \begin{align*}
-    \sqrt{d}(1 - \eta\lambda_{\min}) < 1 \\
-    \iff \eta > \frac{1}{\lambda_{\min}}\lp 1 - \frac{1}{\sqrt{d}}\rp 
+    (1 - \eta\lambda_{\min{}}) < 1 \\
 \end{align*}
-Thus, in particular $\eta = \frac{1}{\lambda_{\min}}\lp 1 - \frac{1}{\alpha\sqrt{d}} \rp$ for some $\alpha > 1$ satisfies our requirement. However, we can get a tighter bound if we have the following:
+Observe that for $\eta \leq 1/\lambda_{\max{}}$ we have $ 0 \leq \lp 1 - \eta \lambda_{\max{}} \rp \leq \lp 1 - \eta \lambda_{\min{}} \rp < 1$
 \begin{align*}
-    \lp 1 - \frac{1}{\sqrt{d}} \rp \leq \frac{\lambda_{\min}}{\lambda_{\max}} \\
-    \iff \kappa(\A^\top \A) \leq \lp 1 - \frac{1}{\sqrt{d}} \rp^{-1}
+    \norm{\bx_{t+1} - \bx^*}_2 \leq \lp1 - \eta \lambda_{\min} \rp \cdot \norm{\bx_t - \bx^*}_2 \\
+    \leq \lp 1 - \eta \lambda_{\min} \rp^t \cdot \norm{\bx_0 - \bx^*}_2
 \end{align*}
-If this condition is satisfied, we can get away with $\eta = 1/\lambda_{\max}$. In either case, we get the following:
-\begin{align*}
-    \norm{\bx_{t+1} - \bx^*}_2 \leq \lp1 - \eta \lambda_{\min} \rp \cdot \sqrt{d} \cdot \norm{\bx_t - \bx^*}_2 \\
-    \leq \lp \lp1 - \eta \lambda_{\min} \rp \cdot \sqrt{d}\rp^t \cdot \norm{\bx_0 - \bx^*}_2
-\end{align*}
-Thus we can meet the following convergence criterion for any $\epsilon > 0$ within $\O(\log \epsilon)$ iterations. The optimal rate is obtained when the aforementioned condition is satisfied, and we may pick $\eta = 1/\lambda_{\max}$.
+Thus we can meet the following convergence criterion for any $\epsilon > 0$ within $\O(\log \epsilon)$ iterations. The optimal rate is obtained when we pick $\eta = 1/\lambda_{\max}$.
 \begin{align*}
     \norm{\bx_{t + 1} - \bx^*}_2 \leq \epsilon \cdot \norm{\bx_0 - \bx^*}_2
 \end{align*}
