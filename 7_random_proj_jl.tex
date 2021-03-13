@@ -1,1 +1,76 @@
 \section{Random Projections, Johnson-Lindenstrauss Lemma}
+    \subsection{Motivation: Approximate Nearest Neighbors}
+        Suppose we are given a point, and want to classify it into one of, say, $10$
+        different classes. If we already have a bunch of labeled data points $\D$,
+        then intuitively one of the simpler ways to do this is to look at the point
+        closest to the query point, and decide based on what class that point lies in.
+        This is basically the nearest neighbors algorithm.
+        \begin{defn}[Nearest Neighbors]
+            Given a training set $\D = \set{(x_i, y_i)}_{i \in [n]}$, and a query point
+            $q$, where $x_i, q \in \R^d$ and $y_i \in {\mathcal C}$, output
+            \begin{align*}
+                x_* = \argmin_{\x_j \in \D} \, \norm{\x_j - {\mathbf{q}}}_2
+            \end{align*}
+        \end{defn}
+
+        However, observe that in order to compute the nearest neighbor of a point,
+        we must compute $\O(n)$ distances, which takes $\O(nd)$ time for $d$-dim vectors.
+        This very quickly becomes intractable as $n$, $d$ get even mildly large. Thus we
+        may want to look for a suitable relaxation of the problem. Indeed, the simplest
+        relaxation wherein instead of looking for the exact nearest neighbor we only ask for
+        an $\epsilon$-approximate (multiplicative error) is a resonable choice. But then, how
+        do we compute this efficiently?
+
+        \subsubsection{Low Rank Approximations with SVD}
+            You might think, well if dimension is the problem let's just reduce it!
+            We know how to do that! Recall that we can utilize the SVD of a matrix
+            to find the best rank $r$ approximation / subspace.
+
+            If we do this, we will observe that the cost of projecting each query point
+            into $r$ dimensional space is $\O(r \cdot d)$, and the cost of doing a
+            nearest-neighbors search in $r$-dimensional space is $\O(n \cdot r)$,
+            giving us a total run time of $\O((n + d) \cdot r)$. Great! We have
+            successfully accomplished our mission, time to pack up our bags and-- not so fast(Of course, we cannot have nice things!).
+            The issue with this method is, we have assumed that our query points lie in a subspace
+            close to our training dataset. But what if it's an outlier which has negligible
+            components in the subspace? Then any training example is a nearest neighbor,
+            which is awful.
+        
+        \subsubsection{When in doubt, Gaussian}
+            The title of this subsection is a theme which comes up extremely often. But yes,
+            while SVD might have failed us, as we will see dear old Gauss has not. It turns out
+            that if we pick a random $r$-dimensional subspace and project into it, then Euclidean
+            distances are approximately preserved. Since with (approximate) nearest neighbors search
+            we are only interested in the (ordering of) Euclidean distances this works perfectly.
+
+            One way to project into these random subspaces is to consider an $d \times d$ orthogonal
+            matrix, and then take only the first $r$ rows of it. Another way is to sample $r$ orthogonal
+            unit vectors $u_1, \dots, u_r \in \R^d$, and then simply project onto the subspace induced
+            by them. If, for instance, we sample from a standard Gaussian then you may recall that with
+            high probability the vectors will be pairwise orthogonal.  Thus, we will define
+            a random linear map $f: \R^d \to \R^r$ as the map given be $f(\x) = \lp \inn{u_1, \x}, \dots, \inn{u_r, \x} \rp$
+            where each $u_i \sim \N(0, \I_d)$. Then, we get the following theorem:
+            
+            \begin{theorem}
+            Let $\mathbf{v} \in \R^d$ be fixed, and $f: \R^d \to \R^r$ be a random Gaussian projection. Then, there
+            exists a universal constant $c > 0$ such that for any $\epsilon \in (0,1)$
+            \begin{align*}
+                \Pr \lb \left| \norm{f(\mathbf{v})}_2 - \sqrt{r}\norm{\mathbf{v}}_2 \right| \geq \epsilon \sqrt{r} \norm{\mathbf{v}}_2 \rb \leq 3 \exp\lp -cr\epsilon^2 \rp
+            \end{align*}
+            \end{theorem}
+            \begin{proof}[Proof Sketch]
+                Assume $\norm{\mathbf{v}}_2$ is unit norm. Then $f(\mathbf{v})_i$ is i.i.d standard Gaussian, apply
+                Gaussian Annulus theorem to finish.
+            \end{proof}
+
+            Thus we see that with high probability projecting into a
+            random subspace preserves distances upto constant factors,
+            which is all we need. Thus, we can now apply this to
+            approximate nearest neighbors by fixing some $\epsilon > 0$
+            and setting $r = \O(\frac{2\log{n}}{\epsilon})$.
+
+            By the theorem, with probability at least $1 - \frac{1}{n^2}$
+            we have $\norm{f(q) - f(\x_j)}_2 = (1 \pm \epsilon)\sqrt{r} \norm{q - \x_j}_2$.
+            By union bound, with probability at least $1 - \frac{1}{n}$, this holds
+            for all points in $\D$. Thus $$x_* = \argmin_{\x_j \in \D} \, \norm{f(\x_j) - f(q)}_2$$
+            will be an $\epsilon$-nearest neighbor of $q$.
